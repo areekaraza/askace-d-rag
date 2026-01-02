@@ -6,6 +6,9 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/streamlit-1.41.1-red.svg)](https://streamlit.io)
 
+## 🌐 Live Demo
+**[Try AskAce Live →](https://areekaraza.github.io/askace-d-rag)** - Static web version hosted on GitHub Pages
+
 ## ✨ Features
 
 🔒 **Complete Privacy** - All processing happens locally  
@@ -14,6 +17,7 @@
 🎯 **Smart Retrieval** - FAISS vector search with citations  
 🚀 **Easy Deployment** - One-click cloud deployment  
 💰 **Zero API Costs** - Uses local Ollama LLMs  
+🌐 **Web Version** - Static HTML/CSS/JS for GitHub Pages
 
 ## 🚀 Quick Start
 
@@ -41,6 +45,27 @@ streamlit run app.py
 - Drop files into `data/` folder
 - Click "🚀 Build Index" 
 - Start asking questions!
+
+## 🎓 Free Student Hosting
+
+**GitHub Student? Deploy for FREE!**
+
+| Resource | Student Benefit | Duration |
+|----------|----------------|----------|
+| DigitalOcean Credits | $200 | 16+ months |
+| Domain (.me) | Free | 1 year |
+| SSL Certificate | Free | Forever |
+
+📖 **[Complete Student Guide →](GITHUB_STUDENT_DEPLOYMENT.md)**
+
+## 🌐 Deployment Options
+
+| Method | Cost | Setup Time | Best For |
+|--------|------|------------|----------|
+| [**GitHub Pages**](index.html) | **FREE** | 2 min | 🌐 Web demos |
+| [**Student Pack**](GITHUB_STUDENT_DEPLOYMENT.md) | **FREE** | 30 min | 🎓 Students |
+| [**VPS + Ollama**](VPS_DEPLOYMENT.md) | $5-12/month | 20 min | 🔒 Privacy |
+| [**Streamlit Cloud**](STREAMLIT_CLOUD_GUIDE.md) | $1-5/month | 10 min | 🚀 Beginners |
 
 ## ⚡ Performance Optimizations
 
@@ -70,7 +95,7 @@ User Query → Embedding → Similarity Search → Context → LLM → Answer
 
 ## 🛠️ Tech Stack
 
-- **🎨 Frontend**: Streamlit
+- **🎨 Frontend**: Streamlit + HTML/CSS/JS
 - **🔤 Embeddings**: SentenceTransformers (local)
 - **🗂️ Vector DB**: FAISS
 - **🤖 LLM**: Ollama (local) / OpenAI (cloud)
@@ -91,26 +116,45 @@ User Query → Embedding → Similarity Search → Context → LLM → Answer
 
 ```
 askace-drag/
-├── app.py                 # Main Streamlit application
+├── index.html             # 🌐 Static web version
+├── app.py                 # 🐍 Main Streamlit app
+├── app_cloud.py           # ☁️ Cloud version
+├── start.py               # 🚀 Optimized launcher
 ├── rag/
-│   ├── llm_client.py     # Optimized LLM & embeddings
-│   ├── rag_core.py       # RAG pipeline with caching  
-│   └── ingest.py         # Fast document processing
-├── data/                 # Your documents (create this)
-├── storage/              # Generated indices
-├── start.py              # Optimized launcher
-└── requirements.txt      # Dependencies
+│   ├── llm_client.py     # 🤖 Optimized LLM & embeddings
+│   ├── rag_core.py       # 🧠 RAG pipeline with caching  
+│   └── ingest.py         # 📄 Fast document processing
+├── data/                  # 📂 Your documents
+├── storage/              # 💾 Generated indices
+├── requirements.txt      # 📦 Dependencies
+├── WEB_VERSION.md        # 🌐 Web deployment guide
+└── deployment guides/    # 📚 Hosting instructions
 ```
 
 ## 🚀 Getting Started
 
+### Web Version (Instant)
+```bash
+# Visit the live demo
+https://areekaraza.github.io/askace-d-rag
+```
+
 ### Local Development
 ```bash
-git clone https://github.com/yourusername/askace-drag.git
-cd askace-drag
+git clone https://github.com/areekaraza/askace-d-rag.git
+cd askace-d-rag
 pip install -r requirements.txt
 ollama pull llama3.2:1b
 python start.py
+```
+
+### Production Deployment
+```bash
+# For students with GitHub Pack
+curl -fsSL https://raw.githubusercontent.com/areekaraza/askace-d-rag/main/deploy_student.sh | bash
+
+# For VPS deployment  
+curl -fsSL https://raw.githubusercontent.com/areekaraza/askace-d-rag/main/setup_vps.sh | bash
 ```
 
 ## 🤝 Contributing
@@ -135,8 +179,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 💡 Support
 
 - **Documentation**: Check the deployment guides in this repo
-- **Issues**: [GitHub Issues](https://github.com/yourusername/askace-drag/issues) *(Update after push)*
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/askace-drag/discussions) *(Update after push)*
+- **Issues**: [GitHub Issues](https://github.com/areekaraza/askace-d-rag/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/areekaraza/askace-d-rag/discussions)
 
 ---
 

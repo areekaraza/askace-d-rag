@@ -1,0 +1,21 @@
+# Add your documents here
+# Supported formats: .txt, .md, .pdf, .docx
+
+This folder is where you place your documents for the RAG chatbot to process.
+
+## Usage:
+1. Add your documents to this folder
+2. Click "🚀 Build Index" in the sidebar
+3. Start asking questions about your documents!
+
+## Supported formats:
+- ✅ `.txt` - Plain text files
+- ✅ `.md` - Markdown files  
+- ✅ `.pdf` - PDF documents
+- ✅ `.docx` - Word documents
+
+## Tips:
+- Keep documents focused and well-organized
+- Use descriptive filenames
+- Remove sensitive information before processing
+- Smaller files process faster

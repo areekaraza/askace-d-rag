@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Ultra-fast RAG chatbot for document Q&A - Web Version",
   "main": "index.html",
+  "homepage": "https://areekaraza.github.io/askace-d-rag",
   "scripts": {
     "start": "python -m http.server 8000",
     "dev": "python -m http.server 8000",
@@ -21,12 +22,15 @@
     "openai",
     "javascript",
     "static-site",
-    "github-pages"
+    "github-pages",
+    "streamlit",
+    "ollama",
+    "faiss",
+    "vector-search"
   ],
   "author": "areekaraza",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/areekaraza/askace-d-rag/issues"
-  },
-  "homepage": "https://areekaraza.github.io/askace-d-rag"
+  }
 }
