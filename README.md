@@ -1,13 +1,10 @@
 # AskAce: D'RAG 🎯
 
-**Ultra-fast RAG chatbot for document Q&A with complete privacy and zero API costs**
+**Ultra-fast RAG chatbot for document Q&A**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit](https://img.shields.io/badge/streamlit-1.41.1-red.svg)](https://streamlit.io)
 
-## 🌐 Live Demo
-**[Try AskAce Live →](https://areekaraza.github.io/askace-d-rag)** - Static web version hosted on GitHub Pages
 
 ## ✨ Features
 
@@ -34,38 +31,10 @@ ollama pull llama3.2:1b  # Fast model
 ollama pull llama3.2:3b  # Better quality
 ```
 
-### 3. Launch Application
-```bash
-python start.py
-# OR
-streamlit run app.py
-```
-
 ### 4. Add Your Documents
 - Drop files into `data/` folder
 - Click "🚀 Build Index" 
 - Start asking questions!
-
-## 🎓 Free Student Hosting
-
-**GitHub Student? Deploy for FREE!**
-
-| Resource | Student Benefit | Duration |
-|----------|----------------|----------|
-| DigitalOcean Credits | $200 | 16+ months |
-| Domain (.me) | Free | 1 year |
-| SSL Certificate | Free | Forever |
-
-📖 **[Complete Student Guide →](GITHUB_STUDENT_DEPLOYMENT.md)**
-
-## 🌐 Deployment Options
-
-| Method | Cost | Setup Time | Best For |
-|--------|------|------------|----------|
-| [**GitHub Pages**](index.html) | **FREE** | 2 min | 🌐 Web demos |
-| [**Student Pack**](GITHUB_STUDENT_DEPLOYMENT.md) | **FREE** | 30 min | 🎓 Students |
-| [**VPS + Ollama**](VPS_DEPLOYMENT.md) | $5-12/month | 20 min | 🔒 Privacy |
-| [**Streamlit Cloud**](STREAMLIT_CLOUD_GUIDE.md) | $1-5/month | 10 min | 🚀 Beginners |
 
 ## ⚡ Performance Optimizations
 
@@ -133,12 +102,6 @@ askace-drag/
 
 ## 🚀 Getting Started
 
-### Web Version (Instant)
-```bash
-# Visit the live demo
-https://areekaraza.github.io/askace-d-rag
-```
-
 ### Local Development
 ```bash
 git clone https://github.com/areekaraza/askace-d-rag.git
@@ -146,15 +109,6 @@ cd askace-d-rag
 pip install -r requirements.txt
 ollama pull llama3.2:1b
 python start.py
-```
-
-### Production Deployment
-```bash
-# For students with GitHub Pack
-curl -fsSL https://raw.githubusercontent.com/areekaraza/askace-d-rag/main/deploy_student.sh | bash
-
-# For VPS deployment  
-curl -fsSL https://raw.githubusercontent.com/areekaraza/askace-d-rag/main/setup_vps.sh | bash
 ```
 
 ## 🤝 Contributing
