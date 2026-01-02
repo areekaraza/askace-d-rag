@@ -16,9 +16,9 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 20px 0;
+            overflow-x: auto;
+            overflow-y: auto;
         }
 
         .container {
@@ -28,6 +28,7 @@
             width: 90%;
             max-width: 1200px;
             min-height: 80vh;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: 300px 1fr;
             overflow: hidden;
@@ -37,6 +38,8 @@
             background: #f8f9fa;
             padding: 30px 25px;
             border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+            max-height: 100vh;
         }
 
         .sidebar h2 {
@@ -141,6 +144,8 @@
             display: flex;
             flex-direction: column;
             padding: 30px;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
         }
 
         .chat-messages {
@@ -151,6 +156,27 @@
             background: #f8f9fa;
             border-radius: 15px;
             min-height: 400px;
+            max-height: 500px;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
         }
 
         .message {
