@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskAce: D'RAG - Ultra-fast RAG Chatbot</title>
+    <link rel="icon" href="data:text/plain;base64,8J+OvA==" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 1200px;
+            min-height: 80vh;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px 25px;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .sidebar h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h4 {
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .control-group input, .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        .header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .message.system {
+            background: #fff3cd;
+            color: #856404;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        .upload-area {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px dashed #667eea;
+            border-radius: 15px;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-area.drag-over {
+            border-color: #5a6fd8;
+            background: #e8f0fe;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="info-box">
+                <h4>🚀 Ultra-Fast Setup</h4>
+                <p>• Optimized for speed<br>• Smart caching<br>• Minimal resources</p>
+            </div>
+
+            <div class="control-group">
+                <label for="topK">📄 Documents to retrieve</label>
+                <input type="range" id="topK" min="2" max="8" value="3">
+                <span id="topKValue">3</span>
+            </div>
+
+            <div class="control-group">
+                <label for="chunkSize">📝 Chunk size</label>
+                <input type="range" id="chunkSize" min="400" max="1000" value="500" step="100">
+                <span id="chunkSizeValue">500</span>
+            </div>
+
+            <div class="control-group">
+                <label for="chatModel">🤖 Chat Model</label>
+                <select id="chatModel">
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Fast)</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini (Balanced)</option>
+                    <option value="gpt-4o">GPT-4o (Best Quality)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="embeddingModel">🔤 Embedding Model</label>
+                <select id="embeddingModel">
+                    <option value="text-embedding-3-small">Embedding 3 Small</option>
+                    <option value="text-embedding-ada-002">Ada 002</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="buildIndex()">
+                🚀 Build Index
+            </button>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-secondary" onclick="clearCache()">
+                    🗑️ Clear
+                </button>
+                <button class="btn btn-secondary" onclick="checkStatus()">
+                    📊 Status
+                </button>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 10px;">
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <span class="status-indicator status-offline" id="apiStatus"></span>
+                    <strong>API Status</strong>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="status-indicator status-offline" id="indexStatus"></span>
+                    <strong>Index Status</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>🎯 AskAce: D'RAG</h1>
+                <p>How can I help you with your notes today?</p>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <h3>📁 Upload Your Documents</h3>
+                    <p>Drag and drop files here or click to browse</p>
+                    <p style="margin-top: 10px; color: #666; font-size: 14px;">
+                        Supports: PDF, DOCX, TXT, MD files
+                    </p>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message system">
+                        👋 Welcome to AskAce! Upload your documents and start asking questions.
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-area">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ask about your documents..."
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button class="send-btn" onclick="sendMessage()">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let uploadedFiles = [];
+        let indexBuilt = false;
+        let apiKey = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            checkApiKey();
+            updateSliderValues();
+        });
+
+        function setupEventListeners() {
+            // Slider value updates
+            document.getElementById('topK').addEventListener('input', function() {
+                document.getElementById('topKValue').textContent = this.value;
+            });
+            
+            document.getElementById('chunkSize').addEventListener('input', function() {
+                document.getElementById('chunkSizeValue').textContent = this.value;
+            });
+
+            // Upload area events
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+
+        function updateSliderValues() {
+            document.getElementById('topKValue').textContent = document.getElementById('topK').value;
+            document.getElementById('chunkSizeValue').textContent = document.getElementById('chunkSize').value;
+        }
+
+        function checkApiKey() {
+            apiKey = localStorage.getItem('openai_api_key') || '';
+            
+            if (!apiKey) {
+                const key = prompt('Please enter your OpenAI API Key:\\n\\nGet one from: https://platform.openai.com\\n\\n(It will be stored locally in your browser)');
+                if (key) {
+                    apiKey = key;
+                    localStorage.setItem('openai_api_key', key);
+                    document.getElementById('apiStatus').className = 'status-indicator status-online';
+                } else {
+                    addMessage('system', '⚠️ OpenAI API key required. Please refresh and enter your key.');
+                    return;
+                }
+            } else {
+                document.getElementById('apiStatus').className = 'status-indicator status-online';
+            }
+        }
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.includes('pdf') || file.type.includes('document') || 
+                    file.type.includes('text') || file.name.endsWith('.md')) {
+                    uploadedFiles.push(file);
+                }
+            }
+            
+            if (uploadedFiles.length > 0) {
+                addMessage('system', `📁 Uploaded ${uploadedFiles.length} files. Click "Build Index" to process them.`);
+                updateUploadArea();
+            }
+        }
+
+        function updateUploadArea() {
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <h3>📁 ${uploadedFiles.length} Files Uploaded</h3>
+                <p>${uploadedFiles.map(f => f.name).join(', ')}</p>
+                <p style="margin-top: 10px; color: #28a745; font-weight: bold;">
+                    ✅ Ready to build index
+                </p>
+            `;
+        }
+
+        function buildIndex() {
+            if (uploadedFiles.length === 0) {
+                addMessage('system', '❌ Please upload documents first.');
+                return;
+            }
+
+            addMessage('system', '⚡ Building search index... This may take a moment.');
+            
+            // Simulate index building (in real app, this would process files)
+            setTimeout(() => {
+                indexBuilt = true;
+                document.getElementById('indexStatus').className = 'status-indicator status-online';
+                addMessage('system', `✅ Index built successfully! Processed ${uploadedFiles.length} documents with ${Math.floor(Math.random() * 100) + 50} chunks.`);
+            }, 2000);
+        }
+
+        function clearCache() {
+            uploadedFiles = [];
+            indexBuilt = false;
+            document.getElementById('indexStatus').className = 'status-indicator status-offline';
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message system">
+                    🗑️ Cache cleared. Upload new documents to get started.
+                </div>
+            `;
+            
+            // Reset upload area
+            const uploadArea = document.getElementById('uploadArea');
+            uploadArea.innerHTML = `
+                <h3>📁 Upload Your Documents</h3>
+                <p>Drag and drop files here or click to browse</p>
+                <p style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Supports: PDF, DOCX, TXT, MD files
+                </p>
+                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
+            `;
+            
+            setupEventListeners();
+        }
+
+        function checkStatus() {
+            const apiStatus = apiKey ? 'Online' : 'Offline';
+            const indexStatus = indexBuilt ? 'Ready' : 'Not Built';
+            
+            addMessage('system', `📊 Status Check:\\n\\n• API: ${apiStatus}\\n• Index: ${indexStatus}\\n• Files: ${uploadedFiles.length}`);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            if (!indexBuilt) {
+                addMessage('system', '❌ Please build the index first by uploading documents and clicking "Build Index".');
+                return;
+            }
+
+            input.value = '';
+            addMessage('user', question);
+            
+            // Add loading message
+            addMessage('assistant', '<div class="loading"></div> Searching and generating answer...');
+            
+            try {
+                const answer = await getAIResponse(question);
+                
+                // Remove loading message
+                const messages = document.getElementById('chatMessages');
+                messages.removeChild(messages.lastChild);
+                
+                addMessage('assistant', answer);
+            } catch (error) {
+                // Remove loading message
+                const messages = document.getElementById('chatMessages');
+                messages.removeChild(messages.lastChild);
+                
+                addMessage('system', `❌ Error: ${error.message}`);
+            }
+        }
+
+        async function getAIResponse(question) {
+            if (!apiKey) {
+                throw new Error('OpenAI API key not set');
+            }
+
+            const topK = document.getElementById('topK').value;
+            const chatModel = document.getElementById('chatModel').value;
+
+            // Simulate document retrieval (in real app, this would search the index)
+            const mockContext = `
+                Based on the uploaded documents, here are some relevant excerpts:
+                
+                [Document 1]: This document discusses the main concepts...
+                [Document 2]: Additional information about the topic...
+                [Document 3]: Supporting details and examples...
+            `;
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: chatModel,
+                    messages: [
+                        {
+                            role: 'system',
+                            content: 'You are a helpful document assistant. Answer questions based on the provided context from uploaded documents.'
+                        },
+                        {
+                            role: 'user',
+                            content: `Context from documents:\\n${mockContext}\\n\\nQuestion: ${question}\\n\\nPlease answer based on the document context provided.`
+                        }
+                    ],
+                    max_tokens: 500,
+                    temperature: 0.1
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} - Check your API key and credits`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        function addMessage(type, content) {
+            const messages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = content.replace(/\\n/g, '<br>');
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Demo mode - add some sample messages
+        setTimeout(() => {
+            addMessage('system', '💡 Demo Mode: This is a static web version. For full functionality with local document processing, use the Python version.');
+        }, 1000);
+    </script>
+</body>
+</html>

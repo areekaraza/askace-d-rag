@@ -1,0 +1,32 @@
+{
+  "name": "askace-drag-web",
+  "version": "1.0.0",
+  "description": "Ultra-fast RAG chatbot for document Q&A - Web Version",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static build - no build step required'",
+    "deploy": "echo 'Ready for GitHub Pages deployment'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/areekaraza/askace-d-rag.git"
+  },
+  "keywords": [
+    "rag",
+    "chatbot", 
+    "ai",
+    "document-qa",
+    "openai",
+    "javascript",
+    "static-site",
+    "github-pages"
+  ],
+  "author": "areekaraza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/areekaraza/askace-d-rag/issues"
+  },
+  "homepage": "https://areekaraza.github.io/askace-d-rag"
+}
