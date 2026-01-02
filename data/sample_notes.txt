@@ -1,0 +1,7 @@
+CCP (Parallel & Distributed Computing) - Sample Notes
+
+- Speedup (S) is defined as: S = T_serial / T_parallel.
+- Amdahl's Law: S_max = 1 / ((1 - p) + p / N)
+  where p is the parallel fraction and N is the number of processors.
+- Common communication patterns: broadcast, scatter, gather, reduce.
+

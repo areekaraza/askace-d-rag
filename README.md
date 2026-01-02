@@ -42,26 +42,6 @@ streamlit run app.py
 - Click "🚀 Build Index" 
 - Start asking questions!
 
-## 🎓 Free Student Hosting
-
-**GitHub Student? Deploy for FREE!**
-
-| Resource | Student Benefit | Duration |
-|----------|----------------|----------|
-| DigitalOcean Credits | $200 | 16+ months |
-| Domain (.me) | Free | 1 year |
-| SSL Certificate | Free | Forever |
-
-📖 **[Complete Student Guide →](GITHUB_STUDENT_DEPLOYMENT.md)**
-
-## 🌐 Deployment Options
-
-| Method | Cost | Setup Time | Best For |
-|--------|------|------------|----------|
-| [**Student Pack**](GITHUB_STUDENT_DEPLOYMENT.md) | **FREE** | 30 min | 🎓 Students |
-| [**VPS + Ollama**](VPS_DEPLOYMENT.md) | $5-12/month | 20 min | 🔒 Privacy |
-| [**Streamlit Cloud**](DEPLOYMENT.md) | $1-5/month | 10 min | 🚀 Beginners |
-
 ## ⚡ Performance Optimizations
 
 - **Smart Caching** - Index and models cached in memory
@@ -131,18 +111,6 @@ cd askace-drag
 pip install -r requirements.txt
 ollama pull llama3.2:1b
 python start.py
-```
-
-### 🌐 Live Demo
-**[Try AskAce Live →](https://yourusername-askace-drag-app.streamlit.app)** *(Update this after deployment)*
-
-### Production Deployment
-```bash
-# For students with GitHub Pack
-curl -fsSL https://raw.githubusercontent.com/yourusername/askace-drag/main/deploy_student.sh | bash
-
-# For VPS deployment  
-curl -fsSL https://raw.githubusercontent.com/yourusername/askace-drag/main/setup_vps.sh | bash
 ```
 
 ## 🤝 Contributing
