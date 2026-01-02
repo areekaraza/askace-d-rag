@@ -1,0 +1,25 @@
+import threading
+import time
+
+def task(name, delay):
+    """Function that simulates a time-consuming task."""
+    print(f"Task {name} starting...")
+    time.sleep(delay)
+    print(f"Task {name} completed after {delay} seconds")
+
+# Creating multiple threads
+task1 = threading.Thread(target=task, args=("A", 1))
+task2 = threading.Thread(target=task, args=("B", 2))
+task3 = threading.Thread(target=task, args=("C", 3))
+
+# Starting threads
+task1.start()
+task2.start()
+task3.start()
+
+# Waiting for all threads to complete
+task1.join()
+task2.join()
+task3.join()
+
+print("All tasks completed concurrently!")

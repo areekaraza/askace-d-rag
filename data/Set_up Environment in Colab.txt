@@ -1,0 +1,47 @@
+1. Install Necessary Libraries
+#Run the following command in a Colab cell to install the required libraries:
+
+!pip install pycuda
+
+
+2. Import Required Libraries
+
+import multiprocessing
+import socket
+import pycuda.driver as cuda
+import pycuda.autoinit  
+
+3. Verify CUDA Support
+Check if a GPU is available in your Colab session:
+
+!nvidia-smi  #If a GPU is enabled, this command will display details about your GPU.
+
+#Alternatively, check using PyCUDA:
+
+cuda.init()
+device_count = cuda.Device.count()
+print(f"Number of CUDA-enabled GPUs available: {device_count}")
+if device_count > 0:
+    device = cuda.Device(0)
+    print(f"GPU Name: {device.name()}")
+
+4. Check Multiprocessing Functionality
+
+def worker_function():
+    print(f"Process ID: {multiprocessing.current_process().pid}")
+
+if __name__ == "__main__":
+    process = multiprocessing.Process(target=worker_function)
+    process.start()
+    process.join()
+
+5. Check Socket Communication
+
+def get_local_ip():
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    print(f"Local IP Address: {local_ip}")
+
+get_local_ip()
+
+#This retrieves your machine's local IP address.

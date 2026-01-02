@@ -1,0 +1,22 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Define the proportion of code that can be parallelized
+P = 0.9
+
+# Number of processors
+processors = np.arange(1, 65)
+
+# Amdahl's Law Speedup calculation
+speedup = 1 / ((1 - P) + (P / processors))
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(processors, speedup, marker='o', color='teal', label=f"P = {P}")
+plt.title("Amdahl's Law: Speedup vs Number of Processors")
+plt.xlabel("Number of Processors")
+plt.ylabel("Speedup")
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
