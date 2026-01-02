@@ -407,7 +407,7 @@
                 <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message system">
-                        👋 Welcome to AskAce! Your parallel computing course documents are indexed and ready.
+                        👋 Welcome to AskAce: D'RAG! Demo documents are loaded and ready for questions.
                     </div>
                 </div>
 
@@ -483,20 +483,50 @@
         }
 
         function checkApiKey() {
-            apiKey = localStorage.getItem('openai_api_key') || '';
+            // Check for existing API keys
+            apiKey = localStorage.getItem('hf_api_key') || localStorage.getItem('openai_api_key') || '';
             
-            if (!apiKey) {
-                const key = prompt('Please enter your OpenAI API Key:\\n\\nGet one from: https://platform.openai.com\\n\\n(It will be stored locally in your browser)');
-                if (key) {
-                    apiKey = key;
-                    localStorage.setItem('openai_api_key', key);
-                    document.getElementById('apiStatus').className = 'status-indicator status-online';
-                } else {
-                    addMessage('system', '⚠️ OpenAI API key required. Please refresh and enter your key.');
-                    return;
-                }
-            } else {
+            // Don't force API key entry - let it work in demo mode
+            if (apiKey) {
                 document.getElementById('apiStatus').className = 'status-indicator status-online';
+                document.getElementById('apiKey').value = apiKey.substring(0, 8) + '...';
+            } else {
+                document.getElementById('apiStatus').className = 'status-indicator status-offline';
+                // Show demo mode message
+                setTimeout(() => {
+                    addMessage('system', '🔧 Demo Mode: Add your Hugging Face API key in the settings for enhanced responses!');
+                }, 2000);
+            }
+        }
+
+        function saveApiKey() {
+            const input = document.getElementById('apiKey');
+            const provider = document.getElementById('apiProvider').value;
+            
+            if (input.value.trim()) {
+                apiKey = input.value.trim();
+                const storageKey = provider === 'huggingface' ? 'hf_api_key' : 'openai_api_key';
+                localStorage.setItem(storageKey, apiKey);
+                document.getElementById('apiStatus').className = 'status-indicator status-online';
+                addMessage('system', '✅ API key saved successfully!');
+            }
+        }
+
+        function updateModelOptions() {
+            const provider = document.getElementById('apiProvider').value;
+            const modelSelect = document.getElementById('chatModel');
+            
+            if (provider === 'huggingface') {
+                modelSelect.innerHTML = `
+                    <option value="microsoft/DialoGPT-medium">DialoGPT Medium</option>
+                    <option value="microsoft/DialoGPT-large">DialoGPT Large</option>
+                    <option value="facebook/blenderbot-400M-distill">BlenderBot 400M</option>
+                `;
+            } else {
+                modelSelect.innerHTML = `
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    <option value="gpt-4">GPT-4</option>
+                `;
             }
         }
 
@@ -583,11 +613,6 @@
             const question = input.value.trim();
             
             if (!question) return;
-            
-            if (!indexBuilt) {
-                addMessage('system', '❌ Please build the index first by uploading documents and clicking "Build Index".');
-                return;
-            }
 
             input.value = '';
             addMessage('user', question);
@@ -627,10 +652,6 @@
         }
 
         async function getAIResponse(question) {
-            if (!apiKey) {
-                throw new Error('API key not set');
-            }
-
             const chatModel = document.getElementById('chatModel').value;
             const provider = document.getElementById('apiProvider').value;
 
@@ -659,10 +680,21 @@
                 Additional context: The documents cover parallel computing concepts, algorithm implementations, performance optimization, threading models, and practical coding examples for high-performance computing applications.
             `;
 
-            if (provider === 'huggingface') {
-                return await getHuggingFaceResponse(question, mockContext, chatModel);
+            // Always try API first if key is available, then fallback to demo
+            if (apiKey && apiKey.trim() !== '') {
+                try {
+                    if (provider === 'huggingface') {
+                        return await getHuggingFaceResponse(question, mockContext, chatModel);
+                    } else {
+                        return await getOpenAIResponse(question, mockContext, chatModel);
+                    }
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return getDemoResponse(question, mockContext);
+                }
             } else {
-                return await getOpenAIResponse(question, mockContext, chatModel);
+                // No API key - use demo mode
+                return getDemoResponse(question, mockContext);
             }
         }
 
@@ -815,7 +847,6 @@
 💡 **Try asking**: "What is parallel computing?", "Explain threading", "How do parallel algorithms work?", or "Show me code examples".
 
 🔧 **Note**: For full AI-powered responses, add your Hugging Face API key in the settings panel.`;
-        }
         }
 
         async function getOpenAIResponse(question, context, model) {
