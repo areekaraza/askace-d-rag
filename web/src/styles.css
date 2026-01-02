@@ -143,10 +143,11 @@ input[type="text"], input[type="password"], select, textarea {
 textarea { resize: vertical; min-height: 84px; }
 
 input[type="file"] {
-  color: transparent;
+  font-size: 0;
 }
 
 input[type="file"]::file-selector-button {
+  font-size: 12px;
   color: var(--text);
 }
 
