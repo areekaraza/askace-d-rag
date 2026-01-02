@@ -248,26 +248,6 @@
             transform: scale(1.1);
         }
 
-        .upload-area {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 2px dashed #667eea;
-            border-radius: 15px;
-            text-align: center;
-            background: #f8f9ff;
-            transition: all 0.3s;
-        }
-
-        .upload-area:hover {
-            background: #f0f4ff;
-            transform: translateY(-2px);
-        }
-
-        .upload-area.drag-over {
-            border-color: #5a6fd8;
-            background: #e8f0fe;
-        }
-
         .status-indicator {
             display: inline-block;
             width: 12px;
@@ -394,16 +374,6 @@
 
             <!-- Chat Area -->
             <div class="chat-area">
-                <!-- Upload Area -->
-                <div class="upload-area" id="uploadArea">
-                    <h3>📁 Upload Your Documents</h3>
-                    <p>Drag and drop files here or click to browse</p>
-                    <p style="margin-top: 10px; color: #666; font-size: 14px;">
-                        Supports: PDF, DOCX, TXT, MD files
-                    </p>
-                    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
-                </div>
-
                 <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message system">
@@ -430,7 +400,6 @@
 
     <script>
         // Global state
-        let uploadedFiles = [];
         let indexBuilt = false;
         let apiKey = '';
 
@@ -449,31 +418,6 @@
             
             document.getElementById('chunkSize').addEventListener('input', function() {
                 document.getElementById('chunkSizeValue').textContent = this.value;
-            });
-
-            // Upload area events
-            const uploadArea = document.getElementById('uploadArea');
-            const fileInput = document.getElementById('fileInput');
-
-            uploadArea.addEventListener('click', () => fileInput.click());
-            
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('drag-over');
-            });
-            
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('drag-over');
-            });
-            
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('drag-over');
-                handleFiles(e.dataTransfer.files);
-            });
-
-            fileInput.addEventListener('change', (e) => {
-                handleFiles(e.target.files);
             });
         }
 
@@ -530,76 +474,33 @@
             }
         }
 
-        function handleFiles(files) {
-            for (let file of files) {
-                if (file.type.includes('pdf') || file.type.includes('document') || 
-                    file.type.includes('text') || file.name.endsWith('.md')) {
-                    uploadedFiles.push(file);
-                }
-            }
-            
-            if (uploadedFiles.length > 0) {
-                addMessage('system', `📁 Uploaded ${uploadedFiles.length} files. Click "Build Index" to process them.`);
-                updateUploadArea();
-            }
-        }
-
-        function updateUploadArea() {
-            const uploadArea = document.getElementById('uploadArea');
-            uploadArea.innerHTML = `
-                <h3>📁 ${uploadedFiles.length} Files Uploaded</h3>
-                <p>${uploadedFiles.map(f => f.name).join(', ')}</p>
-                <p style="margin-top: 10px; color: #28a745; font-weight: bold;">
-                    ✅ Ready to build index
-                </p>
-            `;
-        }
-
         function buildIndex() {
-            if (uploadedFiles.length === 0) {
-                addMessage('system', '❌ Please upload documents first.');
-                return;
-            }
-
             addMessage('system', '⚡ Building search index... This may take a moment.');
             
-            // Simulate index building (in real app, this would process files)
+            // Simulate index building for demo
             setTimeout(() => {
                 indexBuilt = true;
                 document.getElementById('indexStatus').className = 'status-indicator status-online';
-                addMessage('system', `✅ Index built successfully! Processed ${uploadedFiles.length} documents with ${Math.floor(Math.random() * 100) + 50} chunks.`);
+                addMessage('system', '✅ Index built successfully! Demo documents are now ready for questions.');
             }, 2000);
         }
 
         function clearCache() {
-            uploadedFiles = [];
             indexBuilt = false;
             document.getElementById('indexStatus').className = 'status-indicator status-offline';
             document.getElementById('chatMessages').innerHTML = `
                 <div class="message system">
-                    🗑️ Cache cleared. Upload new documents to get started.
+                    👋 Welcome to AskAce: D'RAG! Demo documents are loaded and ready for questions.
                 </div>
             `;
-            
-            // Reset upload area
-            const uploadArea = document.getElementById('uploadArea');
-            uploadArea.innerHTML = `
-                <h3>📁 Upload Your Documents</h3>
-                <p>Drag and drop files here or click to browse</p>
-                <p style="margin-top: 10px; color: #666; font-size: 14px;">
-                    Supports: PDF, DOCX, TXT, MD files
-                </p>
-                <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" style="display: none;">
-            `;
-            
-            setupEventListeners();
+        }
         }
 
         function checkStatus() {
-            const apiStatus = apiKey ? 'Online' : 'Offline';
+            const apiStatus = apiKey ? 'Online' : 'Demo Mode';
             const indexStatus = indexBuilt ? 'Ready' : 'Not Built';
             
-            addMessage('system', `📊 Status Check:\\n\\n• API: ${apiStatus}\\n• Index: ${indexStatus}\\n• Files: ${uploadedFiles.length}`);
+            addMessage('system', `📊 Status Check:\\n\\n• API: ${apiStatus}\\n• Index: ${indexStatus}\\n• Demo Data: Loaded`);
         }
 
         function handleKeyPress(event) {
@@ -890,33 +791,14 @@
             messages.scrollTop = messages.scrollHeight;
         }
 
-        // Demo mode - add sample data and messages
+        // Demo mode - auto-setup
         setTimeout(() => {
-            // Simulate your actual uploaded documents from the data folder
-            uploadedFiles = [
-                { name: 'Lecture # 1.pdf', type: 'application/pdf', size: 2500 },
-                { name: 'Lecture # 2.pdf', type: 'application/pdf', size: 2300 },
-                { name: 'Code based Implementation.pdf', type: 'application/pdf', size: 1800 },
-                { name: 'Parallel Linear Search.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 1200 },
-                { name: 'Threading.txt', type: 'text/plain', size: 800 },
-                { name: 'Server-client Code.pdf', type: 'application/pdf', size: 1500 },
-                { name: 'Synchronization.pdf', type: 'application/pdf', size: 1600 },
-                { name: 'Python code for Sorting Algorithm.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 900 }
-            ];
-            
-            // Update upload area to show demo data
-            updateUploadArea();
-            
-            // Set index as built and load your actual document references
+            // Set index as built for demo mode
             indexBuilt = true;
             document.getElementById('indexStatus').className = 'status-indicator status-online';
             
-            addMessage('system', '📚 Your parallel computing course documents are loaded and indexed!');
-            addMessage('system', '📖 Available content: Parallel computing lectures, threading tutorials, algorithm implementations, and coding examples');
-            addMessage('system', '💬 Try asking questions like:');
-            addMessage('system', '• "What is parallel computing?"');
-            addMessage('system', '• "Explain threading concepts"');
-            addMessage('system', '• "How do parallel search algorithms work?"');
+            addMessage('system', '📚 Demo documents are loaded and indexed! Ready for questions about parallel computing.');
+        }, 1000);
             addMessage('system', '• "Show me sorting algorithm implementations"');
             addMessage('system', '• "What are synchronization mechanisms?"');
             addMessage('system', '🔧 Powered by Hugging Face API with your actual course content!');
