@@ -143,12 +143,19 @@ input[type="text"], input[type="password"], select, textarea {
 textarea { resize: vertical; min-height: 84px; }
 
 input[type="file"] {
-  font-size: 0;
+  width: auto;
+  max-width: fit-content;
+  color: transparent;
 }
 
 input[type="file"]::file-selector-button {
-  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 12, 24, 0.5);
   color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .row {
