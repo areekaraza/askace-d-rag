@@ -376,7 +376,7 @@
                 <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message system">
-                        👋 Welcome to AskAce! Upload your documents and start asking questions.
+                        👋 Welcome to AskAce! Demo documents are loaded and ready for questions.
                     </div>
                 </div>
 
@@ -589,13 +589,17 @@
             const topK = document.getElementById('topK').value;
             const chatModel = document.getElementById('chatModel').value;
 
-            // Simulate document retrieval (in real app, this would search the index)
+            // Enhanced mock context with realistic educational content
             const mockContext = `
-                Based on the uploaded documents, here are some relevant excerpts:
+                Based on the uploaded documents, here are relevant excerpts:
                 
-                [Document 1]: This document discusses the main concepts...
-                [Document 2]: Additional information about the topic...
-                [Document 3]: Supporting details and examples...
+                [sample_notes.txt]: Contains course materials covering artificial intelligence, machine learning fundamentals, neural networks, and data preprocessing techniques. Key topics include supervised learning, unsupervised learning, and reinforcement learning paradigms.
+                
+                [lecture_notes.pdf]: Detailed explanations of RAG (Retrieval Augmented Generation) systems, vector databases, embedding techniques, and document processing. Covers implementation strategies using Python, FAISS, and transformer models.
+                
+                [assignments.md]: Programming assignments focused on building chatbots, implementing vector search, creating document indexing systems, and optimizing AI model performance. Includes practical exercises with Streamlit, OpenAI APIs, and local LLM deployment.
+                
+                Additional context: The documents discuss optimization techniques, deployment strategies, cost-effective solutions for students, and real-world applications of RAG systems in education and industry.
             `;
 
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -609,11 +613,11 @@
                     messages: [
                         {
                             role: 'system',
-                            content: 'You are a helpful document assistant. Answer questions based on the provided context from uploaded documents.'
+                            content: 'You are AskAce, a helpful document assistant specializing in educational content and AI/ML topics. Answer questions based on the provided context from uploaded course materials, lecture notes, and assignments. Be informative and educational in your responses.'
                         },
                         {
                             role: 'user',
-                            content: `Context from documents:\\n${mockContext}\\n\\nQuestion: ${question}\\n\\nPlease answer based on the document context provided.`
+                            content: `Context from documents:\\n${mockContext}\\n\\nQuestion: ${question}\\n\\nPlease provide a helpful answer based on the document context provided.`
                         }
                     ],
                     max_tokens: 500,
@@ -638,9 +642,27 @@
             messages.scrollTop = messages.scrollHeight;
         }
 
-        // Demo mode - add some sample messages
+        // Demo mode - add sample data and messages
         setTimeout(() => {
-            addMessage('system', '💡 Demo Mode: This is a static web version. For full functionality with local document processing, use the Python version.');
+            // Simulate some pre-loaded sample documents
+            uploadedFiles = [
+                { name: 'sample_notes.txt', type: 'text/plain', size: 1500 },
+                { name: 'lecture_notes.pdf', type: 'application/pdf', size: 2500 },
+                { name: 'assignments.md', type: 'text/markdown', size: 800 }
+            ];
+            
+            // Update upload area to show demo data
+            updateUploadArea();
+            
+            // Set index as built for demo
+            indexBuilt = true;
+            document.getElementById('indexStatus').className = 'status-indicator status-online';
+            
+            addMessage('system', '📚 Demo Mode: Sample documents loaded! Try asking questions like:');
+            addMessage('system', '• "What are the main topics covered?"');
+            addMessage('system', '• "Summarize the key concepts"');
+            addMessage('system', '• "What assignments are mentioned?"');
+            addMessage('system', '💡 For full functionality with your own documents, use the Python version locally.');
         }, 1000);
     </script>
 </body>
