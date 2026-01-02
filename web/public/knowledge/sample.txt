@@ -1,0 +1,14 @@
+AskAce RAG (Static GitHub Pages Version)
+
+This is a simple Retrieval-Augmented Generation (RAG) chatbot that runs entirely in the browser for retrieval.
+
+How it works:
+1) The app loads text files from the /knowledge folder.
+2) It splits them into chunks.
+3) It builds a TF-IDF index and retrieves the most relevant chunks for your question.
+4) It sends your question + retrieved context to a Hugging Face model.
+
+Privacy and cost:
+- Retrieval happens locally in your browser.
+- Generation uses the Hugging Face Inference API.
+- You provide your Hugging Face API token at runtime (stored in your browser localStorage).
