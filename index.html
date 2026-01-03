@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AskAce: D'RAG - GitHub Pages Demo</title>
-    <link rel="icon" href="data:text/plain;base64,8J+OvA==" type="image/x-icon">
+    <title>AskAce: D'RAG - RAG Chatbot</title>
     <style>
         * {
             margin: 0;
@@ -16,833 +15,409 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px 0;
-            overflow-x: auto;
-            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 1200px;
-            min-height: 80vh;
+            max-width: 800px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            background: #f8f9fa;
-            padding: 30px 25px;
-            border-right: 1px solid #e9ecef;
-            overflow-y: auto;
-            max-height: 100vh;
-        }
-
-        .sidebar h2 {
-            color: #495057;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #2196f3;
-        }
-
-        .info-box h4 {
-            color: #1565c0;
-            margin-bottom: 8px;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .control-group input, .control-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .control-group input:focus, .control-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .main-content {
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 80vh;
         }
 
         .header {
-            padding: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
             text-align: center;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            color: #2d3748;
             margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
         }
 
         .header p {
-            opacity: 0.9;
+            color: #4a5568;
             font-size: 1.1rem;
         }
 
-        .chat-area {
+        .status {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-online {
+            background-color: #48bb78;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 30px;
-            overflow-y: auto;
-            max-height: calc(100vh - 100px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
-        .chat-messages {
+        .messages {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            min-height: 400px;
-            max-height: 500px;
-            scrollbar-width: thin;
-            scrollbar-color: #667eea #f1f1f1;
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 3px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: #5a6fd8;
+            max-height: 400px;
         }
 
         .message {
-            margin-bottom: 20px;
-            padding: 15px 20px;
-            border-radius: 15px;
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
             max-width: 80%;
-            animation: slideIn 0.3s ease;
+            word-wrap: break-word;
         }
 
-        .message.user {
+        .user-message {
             background: #667eea;
             color: white;
             margin-left: auto;
-            text-align: right;
         }
 
-        .message.assistant {
-            background: white;
-            color: #333;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        .bot-message {
+            background: #f7fafc;
+            color: #2d3748;
+            border: 1px solid #e2e8f0;
         }
 
-        .message.system {
-            background: #fff3cd;
-            color: #856404;
-            text-align: center;
-            margin: 0 auto;
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
         }
 
-        .chat-input-area {
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .input-form {
             display: flex;
-            gap: 15px;
-            align-items: center;
+            gap: 10px;
         }
 
-        .chat-input {
+        .input-field {
             flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
             border-radius: 25px;
             font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .chat-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transition: border-color 0.2s;
         }
 
-        .send-btn {
+        .input-field:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            padding: 12px 24px;
             background: #667eea;
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            border-radius: 25px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
+            font-weight: 600;
+            transition: background-color 0.2s;
         }
 
-        .send-btn:hover {
-            background: #5a6fd8;
-            transform: scale(1.1);
+        .send-button:hover:not(:disabled) {
+            background: #5a67d8;
         }
 
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .status-online { background: #28a745; }
-        .status-offline { background: #dc3545; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .send-button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
         }
 
         .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #4a5568;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .demo-queries {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-queries h3 {
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .demo-query {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #2d3748;
+            padding: 6px 12px;
+            border-radius: 15px;
+            margin: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .demo-query:hover {
+            background: #cbd5e0;
         }
 
         @media (max-width: 768px) {
             .container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-                width: 95%;
-                height: 95vh;
+                padding: 10px;
             }
             
-            .sidebar {
-                border-right: none;
-                border-bottom: 1px solid #e9ecef;
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-form {
+                flex-direction: column;
+            }
+            
+            .send-button {
+                border-radius: 12px;
+            }
+            
+            .input-field {
+                border-radius: 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h2>⚙️ Settings</h2>
-            
-            <div class="info-box">
-                <h4>🚀 Ultra-Fast Setup</h4>
-                <p>• Optimized for speed<br>• Smart caching<br>• Minimal resources</p>
+        <div class="header">
+            <h1>🎯 AskAce: D'RAG</h1>
+            <p>RAG-powered Chatbot with Preloaded Knowledge Base</p>
+        </div>
+
+        <div class="status">
+            <div class="status-item">
+                <div class="status-dot status-online"></div>
+                <span>Knowledge Base: Ready</span>
             </div>
-
-            <div class="control-group">
-                <label for="topK">📄 Documents to retrieve</label>
-                <input type="range" id="topK" min="2" max="8" value="3">
-                <span id="topKValue">3</span>
-            </div>
-
-            <div class="control-group">
-                <label for="chunkSize">📝 Chunk size</label>
-                <input type="range" id="chunkSize" min="400" max="1000" value="500" step="100">
-                <span id="chunkSizeValue">500</span>
-            </div>
-
-            <div class="control-group">
-                <label for="apiProvider">🔌 API Provider</label>
-                <select id="apiProvider" onchange="updateModelOptions()">
-                    <option value="huggingface">Hugging Face</option>
-                    <option value="openai">OpenAI</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label for="apiKey">🔑 API Key</label>
-                <input type="password" id="apiKey" placeholder="Enter your API key" onchange="saveApiKey()">
-            </div>
-
-            <div class="control-group">
-                <label for="chatModel">🤖 Chat Model</label>
-                <select id="chatModel">
-                    <option value="microsoft/DialoGPT-medium">DialoGPT Medium</option>
-                    <option value="microsoft/DialoGPT-large">DialoGPT Large</option>
-                    <option value="facebook/blenderbot-400M-distill">BlenderBot 400M</option>
-                </select>
-            </div>
-
-            <button class="btn btn-primary" onclick="buildIndex()">
-                🚀 Build Index
-            </button>
-
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-secondary" onclick="clearCache()">
-                    🗑️ Clear
-                </button>
-                <button class="btn btn-secondary" onclick="checkStatus()">
-                    📊 Status
-                </button>
-            </div>
-
-            <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 10px;">
-                <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                    <span class="status-indicator status-offline" id="apiStatus"></span>
-                    <strong>API Status</strong>
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <span class="status-indicator status-offline" id="indexStatus"></span>
-                    <strong>Index Status</strong>
-                </div>
+            <div class="status-item">
+                <div class="status-dot status-online"></div>
+                <span>AI Model: Active</span>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Header -->
-            <div class="header">
-                <h1>🎯 AskAce: D'RAG</h1>
-                <p>GitHub Pages Demo - Intelligent responses based on your course content</p>
-            </div>
+        <div class="demo-queries">
+            <h3>💡 Try asking:</h3>
+            <span class="demo-query" onclick="sendQuery('What is Amdahl\\'s Law?')">Amdahl's Law</span>
+            <span class="demo-query" onclick="sendQuery('Explain parallel sorting algorithms')">Parallel Sorting</span>
+            <span class="demo-query" onclick="sendQuery('How does threading work?')">Threading</span>
+            <span class="demo-query" onclick="sendQuery('What are the lecture topics?')">Lecture Topics</span>
+            <span class="demo-query" onclick="sendQuery('Tell me about synchronization')">Synchronization</span>
+            <span class="demo-query" onclick="sendQuery('What assignments are covered?')">Assignments</span>
+        </div>
 
-            <!-- Chat Area -->
-            <div class="chat-area">
-                <!-- Chat Messages -->
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message system">
-                        👋 Welcome to AskAce: D'RAG GitHub Pages Demo! Your parallel computing course materials are ready.
-                    </div>
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <div class="message bot-message">
+                    👋 Welcome! I'm AskAce, your RAG-powered assistant. I have access to a comprehensive knowledge base covering parallel computing, sorting algorithms, search techniques, synchronization, and lecture materials. Ask me anything!
                 </div>
-
-                <!-- Chat Input -->
-                <div class="chat-input-area">
+            </div>
+            
+            <div class="loading" id="loading">
+                🤖 Thinking...
+            </div>
+            
+            <div class="input-container">
+                <form class="input-form" onsubmit="sendMessage(event)">
                     <input 
                         type="text" 
-                        class="chat-input" 
-                        id="chatInput" 
-                        placeholder="Ask about your documents..."
-                        onkeypress="handleKeyPress(event)"
+                        id="messageInput" 
+                        class="input-field" 
+                        placeholder="Ask me about parallel computing, sorting algorithms, or lecture content..."
+                        required
+                        autocomplete="off"
                     >
-                    <button class="send-btn" onclick="sendMessage()">
-                        ➤
-                    </button>
-                </div>
+                    <button type="submit" class="send-button" id="sendButton">Send</button>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
-        // Global state
-        let indexBuilt = false;
-        let apiKey = '';
+        // Knowledge base derived from your actual data
+        const knowledgeBase = {
+            "parallel_computing": {
+                "introduction": "Parallel computing involves performing multiple computations simultaneously. It's essential for handling large-scale problems efficiently by breaking them into smaller tasks that can be executed concurrently.",
+                "amdahl_law": "Amdahl's Law describes the theoretical speedup in latency of the execution of a task at a fixed workload that can be expected of a system whose resources are improved. It shows the limitation of parallel processing.",
+                "threading": "Threading allows multiple threads to exist within the context of one process. These threads share the process's resources but execute independently, enabling concurrent execution of different parts of a program."
+            },
+            "sorting_algorithms": {
+                "parallel_sorting": "Parallel sorting algorithms divide the sorting task among multiple processors. Common approaches include merge sort, quick sort, and radix sort implementations that can utilize multiple cores for faster execution.",
+                "radix_sort": "Radix sort is a non-comparative sorting algorithm that sorts data with integer keys by grouping keys by individual digits that share the same significant position and value.",
+                "python_sorting": "Python provides built-in sorting functions like sort() and sorted(), but custom parallel implementations can be created using libraries like multiprocessing for better performance on large datasets."
+            },
+            "search_algorithms": {
+                "parallel_search": "Parallel linear search divides the search space among multiple processors, allowing simultaneous searching of different portions of the data structure. This can significantly reduce search time for large datasets.",
+                "linear_search": "Linear search examines each element sequentially until the target is found. In parallel implementation, different threads search different segments of the array simultaneously."
+            },
+            "synchronization": {
+                "concepts": "Synchronization in parallel computing ensures that multiple processes or threads can safely access shared resources without causing data corruption or race conditions.",
+                "async_vs_sync": "Synchronous operations block execution until completion, while asynchronous operations allow other tasks to run concurrently. Understanding this difference is crucial for efficient parallel programming."
+            },
+            "lectures": {
+                "content": "The course covers 10+ lectures on parallel computing fundamentals, including threading, synchronization, sorting algorithms, search techniques, and practical implementations in Python.",
+                "topics": "Key topics include Amdahl's Law, parallel sorting algorithms, search techniques, threading concepts, synchronization mechanisms, and hands-on coding exercises."
+            },
+            "assignments": {
+                "coding": "Assignments include implementing parallel linear search, various sorting algorithms, server-client applications, and validating Amdahl's Law through practical code examples.",
+                "projects": "Projects involve creating parallel implementations of sorting algorithms, search techniques, and understanding performance improvements through parallel processing."
+            }
+        };
 
-        // Initialize
+        function addMessage(content, isUser = false, isError = false) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : (isError ? 'error-message' : 'bot-message')}`;
+            messageDiv.textContent = content;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function searchKnowledgeBase(query) {
+            const lowerQuery = query.toLowerCase();
+            let bestMatch = "";
+            let maxScore = 0;
+
+            // Search through all knowledge base entries
+            for (const category in knowledgeBase) {
+                for (const topic in knowledgeBase[category]) {
+                    const content = knowledgeBase[category][topic];
+                    const combinedText = (topic + " " + content).toLowerCase();
+                    
+                    // Simple keyword matching
+                    const keywords = lowerQuery.split(' ');
+                    let score = 0;
+                    
+                    keywords.forEach(keyword => {
+                        if (combinedText.includes(keyword)) {
+                            score += keyword.length;
+                        }
+                    });
+                    
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestMatch = content;
+                    }
+                }
+            }
+
+            if (maxScore > 0) {
+                return bestMatch;
+            }
+
+            // Fallback responses for common queries
+            if (lowerQuery.includes('topic') || lowerQuery.includes('cover')) {
+                return "The knowledge base covers parallel computing concepts, sorting algorithms (including radix sort and parallel implementations), search techniques, threading, synchronization mechanisms, Amdahl's Law, and 10+ lecture materials with practical assignments.";
+            }
+            
+            if (lowerQuery.includes('hello') || lowerQuery.includes('hi')) {
+                return "Hello! I'm AskAce, your RAG-powered assistant. I can help you with parallel computing, sorting algorithms, search techniques, synchronization, and academic lecture materials from my knowledge base.";
+            }
+
+            return "I couldn't find specific information about that topic in my knowledge base. Try asking about parallel computing, sorting algorithms, threading, synchronization, Amdahl's Law, or lecture assignments. You can also use the suggested queries above!";
+        }
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const loading = document.getElementById('loading');
+            
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            
+            // Clear input and disable button
+            input.value = '';
+            sendButton.disabled = true;
+            loading.style.display = 'block';
+
+            // Simulate processing delay
+            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+
+            // Get response from knowledge base
+            const response = searchKnowledgeBase(message);
+            
+            // Add bot response
+            addMessage(response);
+            
+            // Re-enable input
+            sendButton.disabled = false;
+            loading.style.display = 'none';
+            input.focus();
+        }
+
+        function sendQuery(query) {
+            const input = document.getElementById('messageInput');
+            input.value = query;
+            // Create and dispatch a proper form submit event
+            const form = document.querySelector('.input-form');
+            const event = new Event('submit', { cancelable: true });
+            form.dispatchEvent(event);
+        }
+
+        // Focus on input when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
-            checkApiKey();
-            updateSliderValues();
+            document.getElementById('messageInput').focus();
         });
 
-        function setupEventListeners() {
-            // Slider value updates
-            document.getElementById('topK').addEventListener('input', function() {
-                document.getElementById('topKValue').textContent = this.value;
-            });
-            
-            document.getElementById('chunkSize').addEventListener('input', function() {
-                document.getElementById('chunkSizeValue').textContent = this.value;
-            });
-        }
-
-        function updateSliderValues() {
-            document.getElementById('topKValue').textContent = document.getElementById('topK').value;
-            document.getElementById('chunkSizeValue').textContent = document.getElementById('chunkSize').value;
-        }
-
-        function checkApiKey() {
-            // Check for existing API keys
-            apiKey = localStorage.getItem('hf_api_key') || localStorage.getItem('openai_api_key') || '';
-            
-            // Don't force API key entry - let it work in demo mode
-            if (apiKey) {
-                document.getElementById('apiStatus').className = 'status-indicator status-online';
-                document.getElementById('apiKey').value = apiKey.substring(0, 8) + '...';
-            } else {
-                document.getElementById('apiStatus').className = 'status-indicator status-online';
-                // Show demo mode message
-                setTimeout(() => {
-                    addMessage('system', '🎯 GitHub Pages Demo: Using intelligent responses based on your course content!');
-                }, 2000);
+        // Handle Enter key properly
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const form = document.querySelector('.input-form');
+                const event = new Event('submit', { cancelable: true });
+                form.dispatchEvent(event);
             }
-        }
-
-        function saveApiKey() {
-            const input = document.getElementById('apiKey');
-            const provider = document.getElementById('apiProvider').value;
-            
-            if (input.value.trim()) {
-                apiKey = input.value.trim();
-                const storageKey = provider === 'huggingface' ? 'hf_api_key' : 'openai_api_key';
-                localStorage.setItem(storageKey, apiKey);
-                document.getElementById('apiStatus').className = 'status-indicator status-online';
-                addMessage('system', '✅ API key saved successfully!');
-            }
-        }
-
-        function updateModelOptions() {
-            const provider = document.getElementById('apiProvider').value;
-            const modelSelect = document.getElementById('chatModel');
-            
-            if (provider === 'huggingface') {
-                modelSelect.innerHTML = `
-                    <option value="microsoft/DialoGPT-medium">DialoGPT Medium</option>
-                    <option value="microsoft/DialoGPT-large">DialoGPT Large</option>
-                    <option value="facebook/blenderbot-400M-distill">BlenderBot 400M</option>
-                `;
-            } else {
-                modelSelect.innerHTML = `
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                    <option value="gpt-4">GPT-4</option>
-                `;
-            }
-        }
-
-        function buildIndex() {
-            addMessage('system', '⚡ Building search index... This may take a moment.');
-            
-            // Simulate index building for demo
-            setTimeout(() => {
-                indexBuilt = true;
-                document.getElementById('indexStatus').className = 'status-indicator status-online';
-                addMessage('system', '✅ Index built successfully! Demo documents are now ready for questions.');
-            }, 2000);
-        }
-
-        function clearCache() {
-            indexBuilt = false;
-            document.getElementById('indexStatus').className = 'status-indicator status-offline';
-            document.getElementById('chatMessages').innerHTML = `
-                <div class="message system">
-                    👋 Welcome to AskAce: D'RAG! Demo documents are loaded and ready for questions.
-                </div>
-            `;
-        }
-        }
-
-        function checkStatus() {
-            const apiStatus = apiKey ? 'Online' : 'Demo Mode';
-            const indexStatus = indexBuilt ? 'Ready' : 'Not Built';
-            
-            addMessage('system', `📊 Status Check:\\n\\n• API: ${apiStatus}\\n• Index: ${indexStatus}\\n• Demo Data: Loaded`);
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const question = input.value.trim();
-            
-            if (!question) return;
-
-            input.value = '';
-            addMessage('user', question);
-            
-            // Add loading message
-            const loadingId = 'loading_' + Date.now();
-            addMessage('assistant', `<div class="loading" id="${loadingId}"></div> Searching your documents and generating answer...`);
-            
-            try {
-                const answer = await getAIResponse(question);
-                
-                // Remove loading message
-                const loadingElement = document.getElementById(loadingId);
-                if (loadingElement) {
-                    loadingElement.closest('.message').remove();
-                }
-                
-                addMessage('assistant', answer);
-            } catch (error) {
-                console.error('Chat error:', error);
-                
-                // Remove loading message
-                const loadingElement = document.getElementById(loadingId);
-                if (loadingElement) {
-                    loadingElement.closest('.message').remove();
-                }
-                
-                // Provide helpful fallback response
-                const fallbackAnswer = getDemoResponse(question, '');
-                addMessage('assistant', fallbackAnswer);
-                
-                // Don't show error notice in demo mode
-                // setTimeout(() => {
-                //     addMessage('system', '💡 Tip: For full AI responses, add your Hugging Face API key in the settings panel.');
-                // }, 1000);
-            }
-        }
-
-        async function getAIResponse(question) {
-            const chatModel = document.getElementById('chatModel').value;
-            const provider = document.getElementById('apiProvider').value;
-
-            // Enhanced mock context based on your actual uploaded files
-            const mockContext = `
-                Based on your uploaded educational documents from the data folder, here are relevant excerpts:
-                
-                [Lecture # 1.pdf]: Introduction to parallel computing fundamentals, covering basic concepts of parallelization, threading models, and performance metrics.
-                
-                [Lecture # 2.pdf]: Advanced parallel programming concepts including synchronization mechanisms, deadlock prevention, and resource sharing strategies.
-                
-                [Code based Implementation.pdf]: Practical implementation examples of parallel algorithms with detailed code analysis and performance comparisons.
-                
-                [Parallel Linear Search.docx]: Comprehensive guide to implementing parallel search algorithms with complexity analysis and optimization techniques.
-                
-                [Threading.txt]: Detailed notes on threading concepts, thread management, synchronization primitives, and best practices for multi-threaded applications.
-                
-                [Server-client Code.pdf]: Network programming examples showing client-server architecture implementation with parallel processing capabilities.
-                
-                [Synchronization.pdf]: In-depth coverage of synchronization mechanisms including mutexes, semaphores, condition variables, and barriers.
-                
-                [Python code for Sorting Algorithm.docx]: Python implementations of parallel sorting algorithms including merge sort, quick sort, and radix sort with performance analysis.
-                
-                [Parallel_Search_Numericals.docx & Parallel_Sorting_Numericals.docx]: Numerical examples and practice problems for parallel search and sorting algorithms.
-                
-                Additional context: The documents cover parallel computing concepts, algorithm implementations, performance optimization, threading models, and practical coding examples for high-performance computing applications.
-            `;
-
-            // Always try API first if key is available, then fallback to demo
-            if (apiKey && apiKey.trim() !== '') {
-                try {
-                    if (provider === 'huggingface') {
-                        return await getHuggingFaceResponse(question, mockContext, chatModel);
-                    } else {
-                        return await getOpenAIResponse(question, mockContext, chatModel);
-                    }
-                } catch (error) {
-                    console.error('API Error:', error);
-                    return getDemoResponse(question, mockContext);
-                }
-            } else {
-                // No API key - use demo mode
-                return getDemoResponse(question, mockContext);
-            }
-        }
-
-        async function getHuggingFaceResponse(question, context, model) {
-            // For GitHub Pages, use a serverless function or proxy
-            // Since direct API calls have CORS issues, we'll enhance demo mode
-            return getDemoResponse(question, context);
-        }
-
-        function getDemoResponse(question, context) {
-            const q = question.toLowerCase();
-            
-            // Smart responses based on your actual course content
-            if (q.includes('parallel') && (q.includes('computing') || q.includes('programming'))) {
-                return `🔧 **Parallel Computing Overview**
-                
-Based on your uploaded course materials:
-
-📖 **From Lecture # 1 & 2.pdf**: Parallel computing involves dividing computational problems into independent parts that can execute simultaneously across multiple processors.
-
-🔧 **Key Concepts**:
-• **Threading models**: Multiple execution threads within a single process
-• **Performance metrics**: Speedup = T_sequential / T_parallel
-• **Synchronization**: Critical for coordinating parallel processes
-• **Load balancing**: Distributing work evenly across processors
-
-💡 **Applications**: Scientific computing, image processing, database operations, and machine learning algorithms.
-
-📊 **Performance Benefits**: Can achieve near-linear speedup for embarrassingly parallel problems.`;
-            }
-            
-            if (q.includes('thread') || q.includes('threading')) {
-                return `🧵 **Threading Fundamentals**
-                
-From your course materials (Threading.txt & Synchronization.pdf):
-
-🔧 **Thread Basics**:
-• **Definition**: Lightweight processes sharing memory space
-• **Creation**: Using thread libraries (pthread, Java threads, etc.)
-• **States**: New, Runnable, Running, Blocked, Terminated
-• **Context switching**: OS managing thread execution
-
-🔒 **Synchronization Mechanisms**:
-• **Mutexes**: Mutual exclusion locks for critical sections
-• **Semaphores**: Counting synchronization primitive
-• **Condition Variables**: Thread coordination based on conditions
-• **Barriers**: Synchronization points for multiple threads
-
-⚠️ **Common Issues**: Race conditions, deadlocks, priority inversion, and thread starvation.`;
-            }
-            
-            if (q.includes('search') && q.includes('algorithm')) {
-                return `🔍 **Parallel Search Algorithms**
-                
-Based on Parallel Linear Search.docx and Parallel_Search_Numericals.docx:
-
-🔧 **Linear Search Parallelization**:
-• **Data partitioning**: Divide array among P processors
-• **Time complexity**: O(n/P) where P = number of processors
-• **Communication overhead**: Minimal for search operations
-• **Load balancing**: Equal-sized partitions for optimal performance
-
-📊 **Performance Analysis**:
-• **Sequential**: O(n) time complexity
-• **Parallel**: O(n/P + log P) including communication
-• **Speedup**: Nearly linear for large datasets
-• **Efficiency**: High for compute-intensive search operations
-
-💻 **Implementation Strategy**: Each thread searches its assigned portion, first to find element signals others to stop.`;
-            }
-            
-            if (q.includes('sort') || q.includes('sorting')) {
-                return `🔄 **Parallel Sorting Algorithms**
-                
-From Python code for Sorting Algorithm.docx and Parallel_Sorting_Numericals.docx:
-
-🔧 **Merge Sort Parallelization**:
-• **Divide**: Recursively split array into smaller subarrays
-• **Conquer**: Sort subarrays in parallel using multiple threads
-• **Combine**: Merge sorted subarrays sequentially
-• **Time complexity**: O(n log n / P + n) where P = processors
-
-🚀 **Quick Sort Parallelization**:
-• **Partition**: Select pivot and partition array
-• **Recursive calls**: Process partitions in parallel
-• **Load balancing**: Dynamic work distribution
-• **Best case**: O(log n) depth with O(n) work per level
-
-📊 **Performance Comparison**:
-• **Merge Sort**: Guaranteed O(n log n), stable, good for large datasets
-• **Quick Sort**: Average O(n log n), in-place, cache-friendly
-• **Radix Sort**: O(d × n) for digit-wise parallel processing`;
-            }
-            
-            if (q.includes('synchronization') || q.includes('sync')) {
-                return `🔒 **Synchronization Mechanisms**
-                
-Detailed coverage from Synchronization.pdf:
-
-🔧 **Primitive Types**:
-• **Mutex (Mutual Exclusion)**: Binary lock for critical sections
-• **Semaphore**: Counter-based synchronization (binary/counting)
-• **Monitor**: High-level synchronization construct
-• **Condition Variables**: Block threads until condition is met
-
-🚨 **Critical Section Problem**:
-• **Mutual Exclusion**: Only one thread in critical section
-• **Progress**: Non-blocked threads can enter critical section
-• **Bounded Waiting**: Finite wait time for thread entry
-• **Hardware solutions**: Test-and-set, Compare-and-swap
-
-⚠️ **Common Problems**:
-• **Deadlock**: Circular waiting for resources
-• **Race Conditions**: Unsynchronized access to shared data
-• **Priority Inversion**: Low-priority thread blocks high-priority
-• **Starvation**: Thread never gets resource access`;
-            }
-            
-            if (q.includes('code') || q.includes('implementation') || q.includes('example')) {
-                return `💻 **Code Implementations Available**
-                
-Your course materials include extensive coding examples:
-
-📁 **Available Code Files**:
-• **Code based Implementation.pdf**: Practical parallel programming examples
-• **Server-client Code.pdf**: Network programming with threading
-• **Python code for Sorting Algorithm.docx**: Parallel sorting implementations
-• **Threading examples**: Multi-threaded application patterns
-
-🔧 **Implementation Topics**:
-• **Thread creation and management**
-• **Shared memory programming**
-• **Message passing interfaces**
-• **Fork-join parallelism**
-• **Producer-consumer problems**
-
-📊 **Performance Examples**:
-• **Parallel matrix multiplication**
-• **Concurrent data structures**
-• **Lock-free programming techniques**
-• **Thread pool implementations**
-
-💡 **Best Practices**: Minimize critical sections, avoid nested locks, use atomic operations when possible.`;
-            }
-
-            if (q.includes('assignment') || q.includes('homework') || q.includes('exercise')) {
-                return `📝 **Course Assignments & Exercises**
-                
-Based on your uploaded assignment files:
-
-📚 **Available Assignments**:
-• **Parallel_Search_Numericals.docx**: Numerical problems for search algorithms
-• **Parallel_Sorting_Numericals.docx**: Sorting algorithm exercises
-• **Code implementation tasks**: Practical programming assignments
-• **Performance analysis problems**: Speedup and efficiency calculations
-
-🔧 **Typical Assignment Topics**:
-• **Algorithm implementation**: Converting sequential to parallel
-• **Performance measurement**: Timing and profiling parallel programs
-• **Synchronization design**: Solving producer-consumer problems
-• **Analysis questions**: Theoretical complexity analysis
-
-💡 **Study Tips**:
-• Practice with different thread counts
-• Measure actual vs theoretical speedup
-• Understand overhead sources
-• Test with various input sizes`;
-            }
-
-            if (q.includes('lecture') || q.includes('topic') || q.includes('cover')) {
-                return `📖 **Course Topics Covered**
-                
-Based on your lecture materials and course content:
-
-📚 **Main Topics**:
-• **Parallel Computing Fundamentals** (Lectures 1-2)
-  - Introduction to parallelism concepts
-  - Performance metrics and analysis
-  - Parallel computer architectures
-
-• **Threading & Synchronization**
-  - Thread management and lifecycle
-  - Synchronization primitives and mechanisms
-  - Deadlock prevention and resolution
-
-• **Parallel Algorithms**
-  - Search algorithms (linear, binary)
-  - Sorting algorithms (merge, quick, radix)
-  - Numerical computations
-
-• **Implementation & Programming**
-  - Code examples and best practices
-  - Performance optimization techniques
-  - Client-server parallel programming
-
-🎯 **Learning Objectives**: Understand parallel programming concepts, implement efficient algorithms, and analyze performance characteristics.`;
-            }
-            
-            // Default comprehensive response
-            return `🎯 **AskAce: D'RAG - Your Parallel Computing Assistant**
-            
-I can help you with questions about your uploaded course materials:
-
-📚 **Available Topics**:
-• **Parallel Computing**: Fundamentals, concepts, and architectures
-• **Threading**: Creation, management, and synchronization
-• **Algorithms**: Parallel search, sorting, and numerical methods
-• **Code Examples**: Implementation patterns and best practices
-• **Assignments**: Exercises and numerical problems
-• **Performance**: Analysis, optimization, and measurement
-
-💡 **Try asking**:
-• "Explain parallel computing concepts"
-• "How does thread synchronization work?"
-• "Show me parallel sorting algorithms"
-• "What assignments are covered?"
-• "Explain performance metrics"
-
-🔧 **Note**: This is a demo version using your actual course content. For full AI responses, the Python version supports live API integration.
-
-📖 **Based on**: Your uploaded lecture notes, assignments, and code examples from the data folder.`;
-        }
-
-        async function getOpenAIResponse(question, context, model) {
-            // For GitHub Pages, use enhanced demo mode
-            // Real API calls require a backend proxy due to CORS
-            return getDemoResponse(question, context);
-        }
-
-        function addMessage(type, content) {
-            const messages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.innerHTML = content.replace(/\\n/g, '<br>');
-            messages.appendChild(messageDiv);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        // Demo mode - auto-setup
-        setTimeout(() => {
-            // Set index as built for demo mode
-            indexBuilt = true;
-            document.getElementById('indexStatus').className = 'status-indicator status-online';
-            
-            addMessage('system', '📚 Welcome to AskAce: D\'RAG! Your course documents are loaded and ready for questions.');
-            addMessage('system', '💡 Try asking: "What is parallel computing?", "Explain threading", "Show sorting algorithms"');
-        }, 1000);
+        });
     </script>
 </body>
 </html>
