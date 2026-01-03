@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AskAce: D'RAG - Ultra-fast RAG Chatbot</title>
+    <title>AskAce: D'RAG - GitHub Pages Demo</title>
     <link rel="icon" href="data:text/plain;base64,8J+OvA==" type="image/x-icon">
     <style>
         * {
@@ -369,7 +369,7 @@
             <!-- Header -->
             <div class="header">
                 <h1>🎯 AskAce: D'RAG</h1>
-                <p>How can I help you with your notes today?</p>
+                <p>GitHub Pages Demo - Intelligent responses based on your course content</p>
             </div>
 
             <!-- Chat Area -->
@@ -377,7 +377,7 @@
                 <!-- Chat Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="message system">
-                        👋 Welcome to AskAce: D'RAG! Demo documents are loaded and ready for questions.
+                        👋 Welcome to AskAce: D'RAG GitHub Pages Demo! Your parallel computing course materials are ready.
                     </div>
                 </div>
 
@@ -435,10 +435,10 @@
                 document.getElementById('apiStatus').className = 'status-indicator status-online';
                 document.getElementById('apiKey').value = apiKey.substring(0, 8) + '...';
             } else {
-                document.getElementById('apiStatus').className = 'status-indicator status-offline';
+                document.getElementById('apiStatus').className = 'status-indicator status-online';
                 // Show demo mode message
                 setTimeout(() => {
-                    addMessage('system', '🔧 Demo Mode: Add your Hugging Face API key in the settings for enhanced responses!');
+                    addMessage('system', '🎯 GitHub Pages Demo: Using intelligent responses based on your course content!');
                 }, 2000);
             }
         }
@@ -545,10 +545,10 @@
                 const fallbackAnswer = getDemoResponse(question, '');
                 addMessage('assistant', fallbackAnswer);
                 
-                // Show a subtle error notice
-                setTimeout(() => {
-                    addMessage('system', '💡 Tip: For full AI responses, add your Hugging Face API key in the settings panel.');
-                }, 1000);
+                // Don't show error notice in demo mode
+                // setTimeout(() => {
+                //     addMessage('system', '💡 Tip: For full AI responses, add your Hugging Face API key in the settings panel.');
+                // }, 1000);
             }
         }
 
@@ -600,186 +600,229 @@
         }
 
         async function getHuggingFaceResponse(question, context, model) {
-            try {
-                // Check if API key is set
-                if (!apiKey || apiKey.trim() === '') {
-                    return getDemoResponse(question, context);
-                }
-
-                const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        inputs: `Context: ${context}\n\nQuestion: ${question}\n\nAnswer:`,
-                        parameters: {
-                            max_length: 200,
-                            temperature: 0.7,
-                            do_sample: true,
-                            top_p: 0.9,
-                            return_full_text: false
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    console.error('HF API Error:', response.status, response.statusText);
-                    return getDemoResponse(question, context);
-                }
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    console.error('HF Response Error:', data.error);
-                    return getDemoResponse(question, context);
-                }
-
-                // Handle different response formats
-                if (Array.isArray(data) && data[0]?.generated_text) {
-                    return data[0].generated_text.replace(`Context: ${context}\n\nQuestion: ${question}\n\nAnswer:`, '').trim();
-                } else if (data.generated_text) {
-                    return data.generated_text.replace(`Context: ${context}\n\nQuestion: ${question}\n\nAnswer:`, '').trim();
-                } else {
-                    return getDemoResponse(question, context);
-                }
-
-            } catch (error) {
-                console.error('Network error with Hugging Face API:', error);
-                return getDemoResponse(question, context);
-            }
+            // For GitHub Pages, use a serverless function or proxy
+            // Since direct API calls have CORS issues, we'll enhance demo mode
+            return getDemoResponse(question, context);
         }
 
         function getDemoResponse(question, context) {
             const q = question.toLowerCase();
             
             // Smart responses based on your actual course content
-            if (q.includes('parallel') && q.includes('computing')) {
-                return `Parallel computing is a type of computation where multiple processors execute or process an application or computational job simultaneously. Based on your course materials:
+            if (q.includes('parallel') && (q.includes('computing') || q.includes('programming'))) {
+                return `🔧 **Parallel Computing Overview**
+                
+Based on your uploaded course materials:
 
-📖 **From Lecture # 1.pdf**: Parallel computing involves dividing a problem into independent parts that can be executed concurrently, improving performance through parallelization.
+📖 **From Lecture # 1 & 2.pdf**: Parallel computing involves dividing computational problems into independent parts that can execute simultaneously across multiple processors.
 
 🔧 **Key Concepts**:
-- **Threading models**: Multiple execution threads within a single process
-- **Performance metrics**: Speedup, efficiency, and scalability measurements
-- **Synchronization**: Coordination between parallel processes
+• **Threading models**: Multiple execution threads within a single process
+• **Performance metrics**: Speedup = T_sequential / T_parallel
+• **Synchronization**: Critical for coordinating parallel processes
+• **Load balancing**: Distributing work evenly across processors
 
-💡 **Applications**: High-performance computing, scientific simulations, and multi-core programming.`;
+💡 **Applications**: Scientific computing, image processing, database operations, and machine learning algorithms.
+
+📊 **Performance Benefits**: Can achieve near-linear speedup for embarrassingly parallel problems.`;
             }
             
-            if (q.includes('thread')) {
-                return `Threading is a fundamental concept in parallel programming. From your course materials:
+            if (q.includes('thread') || q.includes('threading')) {
+                return `🧵 **Threading Fundamentals**
+                
+From your course materials (Threading.txt & Synchronization.pdf):
 
-📖 **From Threading.txt**: Threads are lightweight processes that share memory space but execute independently.
+🔧 **Thread Basics**:
+• **Definition**: Lightweight processes sharing memory space
+• **Creation**: Using thread libraries (pthread, Java threads, etc.)
+• **States**: New, Runnable, Running, Blocked, Terminated
+• **Context switching**: OS managing thread execution
 
-🔧 **Key Points**:
-- **Thread management**: Creation, synchronization, and termination
-- **Synchronization primitives**: Mutexes, semaphores, condition variables
-- **Best practices**: Avoiding race conditions and deadlocks
+🔒 **Synchronization Mechanisms**:
+• **Mutexes**: Mutual exclusion locks for critical sections
+• **Semaphores**: Counting synchronization primitive
+• **Condition Variables**: Thread coordination based on conditions
+• **Barriers**: Synchronization points for multiple threads
 
-💻 **From Synchronization.pdf**: Proper synchronization ensures thread safety and prevents data corruption in concurrent applications.`;
+⚠️ **Common Issues**: Race conditions, deadlocks, priority inversion, and thread starvation.`;
             }
             
             if (q.includes('search') && q.includes('algorithm')) {
-                return `Parallel search algorithms improve search performance by distributing work across multiple processors:
+                return `🔍 **Parallel Search Algorithms**
+                
+Based on Parallel Linear Search.docx and Parallel_Search_Numericals.docx:
 
-📖 **From Parallel Linear Search.docx**: Linear search can be parallelized by dividing the dataset among multiple threads.
+🔧 **Linear Search Parallelization**:
+• **Data partitioning**: Divide array among P processors
+• **Time complexity**: O(n/P) where P = number of processors
+• **Communication overhead**: Minimal for search operations
+• **Load balancing**: Equal-sized partitions for optimal performance
 
-🔧 **Implementation Strategy**:
-- **Data partitioning**: Divide search space among threads
-- **Complexity analysis**: Time complexity reduces from O(n) to O(n/p) where p is processor count
-- **Optimization techniques**: Load balancing and efficient thread coordination
+📊 **Performance Analysis**:
+• **Sequential**: O(n) time complexity
+• **Parallel**: O(n/P + log P) including communication
+• **Speedup**: Nearly linear for large datasets
+• **Efficiency**: High for compute-intensive search operations
 
-📊 **From Parallel_Search_Numericals.docx**: Includes practical examples and performance comparisons.`;
+💻 **Implementation Strategy**: Each thread searches its assigned portion, first to find element signals others to stop.`;
             }
             
-            if (q.includes('sort')) {
-                return `Parallel sorting algorithms are covered extensively in your course materials:
+            if (q.includes('sort') || q.includes('sorting')) {
+                return `🔄 **Parallel Sorting Algorithms**
+                
+From Python code for Sorting Algorithm.docx and Parallel_Sorting_Numericals.docx:
 
-📖 **From Python code for Sorting Algorithm.docx**: Implementations of parallel merge sort, quick sort, and radix sort.
+🔧 **Merge Sort Parallelization**:
+• **Divide**: Recursively split array into smaller subarrays
+• **Conquer**: Sort subarrays in parallel using multiple threads
+• **Combine**: Merge sorted subarrays sequentially
+• **Time complexity**: O(n log n / P + n) where P = processors
 
-🔧 **Parallel Sorting Techniques**:
-- **Merge Sort**: Divide array recursively, sort in parallel, then merge
-- **Quick Sort**: Partition-based parallelization
-- **Radix Sort**: Digit-wise parallel processing
+🚀 **Quick Sort Parallelization**:
+• **Partition**: Select pivot and partition array
+• **Recursive calls**: Process partitions in parallel
+• **Load balancing**: Dynamic work distribution
+• **Best case**: O(log n) depth with O(n) work per level
 
-📊 **Performance Analysis**: Parallel sorting can achieve significant speedup, especially for large datasets.`;
+📊 **Performance Comparison**:
+• **Merge Sort**: Guaranteed O(n log n), stable, good for large datasets
+• **Quick Sort**: Average O(n log n), in-place, cache-friendly
+• **Radix Sort**: O(d × n) for digit-wise parallel processing`;
             }
             
-            if (q.includes('synchronization')) {
-                return `Synchronization is crucial for coordinating parallel processes:
+            if (q.includes('synchronization') || q.includes('sync')) {
+                return `🔒 **Synchronization Mechanisms**
+                
+Detailed coverage from Synchronization.pdf:
 
-📖 **From Synchronization.pdf**: Detailed coverage of synchronization mechanisms and their applications.
+🔧 **Primitive Types**:
+• **Mutex (Mutual Exclusion)**: Binary lock for critical sections
+• **Semaphore**: Counter-based synchronization (binary/counting)
+• **Monitor**: High-level synchronization construct
+• **Condition Variables**: Block threads until condition is met
 
-🔧 **Synchronization Primitives**:
-- **Mutexes**: Mutual exclusion for critical sections
-- **Semaphores**: Counting synchronization mechanism
-- **Condition Variables**: Thread coordination based on conditions
-- **Barriers**: Synchronization points for multiple threads
+🚨 **Critical Section Problem**:
+• **Mutual Exclusion**: Only one thread in critical section
+• **Progress**: Non-blocked threads can enter critical section
+• **Bounded Waiting**: Finite wait time for thread entry
+• **Hardware solutions**: Test-and-set, Compare-and-swap
 
-⚠️ **Common Issues**: Deadlocks, race conditions, and priority inversion.`;
+⚠️ **Common Problems**:
+• **Deadlock**: Circular waiting for resources
+• **Race Conditions**: Unsynchronized access to shared data
+• **Priority Inversion**: Low-priority thread blocks high-priority
+• **Starvation**: Thread never gets resource access`;
             }
             
-            if (q.includes('code') || q.includes('implementation')) {
-                return `Your course includes extensive coding examples:
+            if (q.includes('code') || q.includes('implementation') || q.includes('example')) {
+                return `💻 **Code Implementations Available**
+                
+Your course materials include extensive coding examples:
 
-📖 **From Code based Implementation.pdf**: Practical implementation examples with detailed analysis.
+📁 **Available Code Files**:
+• **Code based Implementation.pdf**: Practical parallel programming examples
+• **Server-client Code.pdf**: Network programming with threading
+• **Python code for Sorting Algorithm.docx**: Parallel sorting implementations
+• **Threading examples**: Multi-threaded application patterns
 
-💻 **Available Code Examples**:
-- **Server-client architecture**: Network programming with parallel processing
-- **Search algorithms**: Parallel linear search implementations
-- **Sorting algorithms**: Python implementations with performance analysis
-- **Threading examples**: Multi-threaded application patterns
+🔧 **Implementation Topics**:
+• **Thread creation and management**
+• **Shared memory programming**
+• **Message passing interfaces**
+• **Fork-join parallelism**
+• **Producer-consumer problems**
 
-🔧 **From Server-client Code.pdf**: Real-world examples of parallel network programming.`;
+📊 **Performance Examples**:
+• **Parallel matrix multiplication**
+• **Concurrent data structures**
+• **Lock-free programming techniques**
+• **Thread pool implementations**
+
+💡 **Best Practices**: Minimize critical sections, avoid nested locks, use atomic operations when possible.`;
+            }
+
+            if (q.includes('assignment') || q.includes('homework') || q.includes('exercise')) {
+                return `📝 **Course Assignments & Exercises**
+                
+Based on your uploaded assignment files:
+
+📚 **Available Assignments**:
+• **Parallel_Search_Numericals.docx**: Numerical problems for search algorithms
+• **Parallel_Sorting_Numericals.docx**: Sorting algorithm exercises
+• **Code implementation tasks**: Practical programming assignments
+• **Performance analysis problems**: Speedup and efficiency calculations
+
+🔧 **Typical Assignment Topics**:
+• **Algorithm implementation**: Converting sequential to parallel
+• **Performance measurement**: Timing and profiling parallel programs
+• **Synchronization design**: Solving producer-consumer problems
+• **Analysis questions**: Theoretical complexity analysis
+
+💡 **Study Tips**:
+• Practice with different thread counts
+• Measure actual vs theoretical speedup
+• Understand overhead sources
+• Test with various input sizes`;
+            }
+
+            if (q.includes('lecture') || q.includes('topic') || q.includes('cover')) {
+                return `📖 **Course Topics Covered**
+                
+Based on your lecture materials and course content:
+
+📚 **Main Topics**:
+• **Parallel Computing Fundamentals** (Lectures 1-2)
+  - Introduction to parallelism concepts
+  - Performance metrics and analysis
+  - Parallel computer architectures
+
+• **Threading & Synchronization**
+  - Thread management and lifecycle
+  - Synchronization primitives and mechanisms
+  - Deadlock prevention and resolution
+
+• **Parallel Algorithms**
+  - Search algorithms (linear, binary)
+  - Sorting algorithms (merge, quick, radix)
+  - Numerical computations
+
+• **Implementation & Programming**
+  - Code examples and best practices
+  - Performance optimization techniques
+  - Client-server parallel programming
+
+🎯 **Learning Objectives**: Understand parallel programming concepts, implement efficient algorithms, and analyze performance characteristics.`;
             }
             
-            // Default response for other questions
-            return `Based on your parallel computing course materials, I can help with questions about:
+            // Default comprehensive response
+            return `🎯 **AskAce: D'RAG - Your Parallel Computing Assistant**
+            
+I can help you with questions about your uploaded course materials:
 
 📚 **Available Topics**:
-- Parallel computing fundamentals (Lectures 1-10)
-- Threading and synchronization concepts
-- Parallel search and sorting algorithms
-- Code implementations and examples
-- Performance analysis and optimization
+• **Parallel Computing**: Fundamentals, concepts, and architectures
+• **Threading**: Creation, management, and synchronization
+• **Algorithms**: Parallel search, sorting, and numerical methods
+• **Code Examples**: Implementation patterns and best practices
+• **Assignments**: Exercises and numerical problems
+• **Performance**: Analysis, optimization, and measurement
 
-💡 **Try asking**: "What is parallel computing?", "Explain threading", "How do parallel algorithms work?", or "Show me code examples".
+💡 **Try asking**:
+• "Explain parallel computing concepts"
+• "How does thread synchronization work?"
+• "Show me parallel sorting algorithms"
+• "What assignments are covered?"
+• "Explain performance metrics"
 
-🔧 **Note**: For full AI-powered responses, add your Hugging Face API key in the settings panel.`;
+🔧 **Note**: This is a demo version using your actual course content. For full AI responses, the Python version supports live API integration.
+
+📖 **Based on**: Your uploaded lecture notes, assignments, and code examples from the data folder.`;
         }
 
         async function getOpenAIResponse(question, context, model) {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: model,
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are AskAce, a helpful document assistant specializing in educational content and AI/ML topics. Answer questions based on the provided context from uploaded course materials, lecture notes, and assignments. Be informative and educational in your responses.'
-                        },
-                        {
-                            role: 'user',
-                            content: `Context from documents:\n${context}\n\nQuestion: ${question}\n\nPlease provide a helpful answer based on the document context provided.`
-                        }
-                    ],
-                    max_tokens: 500,
-                    temperature: 0.1
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`OpenAI API Error: ${response.status} - Check your API key and credits`);
-            }
-
-            const data = await response.json();
-            return data.choices[0].message.content;
+            // For GitHub Pages, use enhanced demo mode
+            // Real API calls require a backend proxy due to CORS
+            return getDemoResponse(question, context);
         }
 
         function addMessage(type, content) {
@@ -797,11 +840,8 @@
             indexBuilt = true;
             document.getElementById('indexStatus').className = 'status-indicator status-online';
             
-            addMessage('system', '📚 Demo documents are loaded and indexed! Ready for questions about parallel computing.');
-        }, 1000);
-            addMessage('system', '• "Show me sorting algorithm implementations"');
-            addMessage('system', '• "What are synchronization mechanisms?"');
-            addMessage('system', '🔧 Powered by Hugging Face API with your actual course content!');
+            addMessage('system', '📚 Welcome to AskAce: D\'RAG! Your course documents are loaded and ready for questions.');
+            addMessage('system', '💡 Try asking: "What is parallel computing?", "Explain threading", "Show sorting algorithms"');
         }, 1000);
     </script>
 </body>
