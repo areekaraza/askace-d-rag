@@ -1,6 +1,10 @@
 {
   "files": [
     "knowledge/sample.txt",
-    "knowledge/README.txt"
+    "knowledge/README.txt",
+    "knowledge/sample_notes.txt",
+    "knowledge/Threading.txt",
+    "knowledge/Code to validate Amdhal's Law.txt",
+    "knowledge/Set_up Environment in Colab.txt"
   ]
 }
